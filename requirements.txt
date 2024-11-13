@@ -1,5 +1,4 @@
-opencv-python-headless==4.5.3.56
-setuptools
+python3-opencv
 streamlit
 streamlit-webrtc
 mediapipe
