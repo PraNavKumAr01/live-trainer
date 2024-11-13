@@ -1,5 +1,5 @@
 opencv-python
 streamlit
-streamlit-webtrc
+streamlit-webrtc
 mediapipe
 pillow
