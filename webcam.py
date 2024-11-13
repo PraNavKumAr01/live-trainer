@@ -4,7 +4,6 @@ import threading
 from dataclasses import dataclass
 from typing import Dict, Any
 import cv2
-import time
 
 @dataclass
 class CameraProperties:
@@ -52,25 +51,14 @@ class BrowserVideoCapture:
             }
         )
         
-        # Wait until the WebRTC streamer context is ready
-        max_retries = 10
-        retry_delay = 0.5  # seconds
-        for _ in range(max_retries):
-            if self.webrtc_ctx.state.playing:
-                self.is_running = True
-                break
-            time.sleep(retry_delay)
-        else:
-            print("Failed to start WebRTC streaming.")
+        # Update running state based on WebRTC context
+        if self.webrtc_ctx.state.playing:
+            self.is_running = True
 
     def _video_frame_callback(self, frame):
         """
         Callback function to handle incoming video frames.
         """
-        # Check for None frames and log them for debugging
-        if frame is None:
-            print("Frame is None.")
-            return frame
         try:
             # Convert VideoFrame to numpy array using RGB format
             img = frame.to_ndarray(format="rgb24")
@@ -123,8 +111,7 @@ class BrowserVideoCapture:
     def isOpened(self):
         """Check if the video stream is open and running."""
         with self._lock:
-            if self.webrtc_ctx and self.webrtc_ctx.state:
-                self.is_running = self.webrtc_ctx.state.playing
+            self.is_running = self.webrtc_ctx.state.playing
             return self.is_running
 
     def read(self):
@@ -133,7 +120,7 @@ class BrowserVideoCapture:
             return False, None
         
         try:
-            frame = self.frame_queue.get(timeout=2.0)  # Increased to 2-second timeout
+            frame = self.frame_queue.get(timeout=1.0)  # 1 second timeout
             return True, frame
         except queue.Empty:
             return False, None
