@@ -1,5 +1,5 @@
 opencv-python-headless
-streamlit
+streamlit==1.33.0
 streamlit-webrtc
 mediapipe
 pillow
